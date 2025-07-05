@@ -55,12 +55,12 @@ class Patient {
             errors.push("患者IDが入力されていません");
         }
         
-        if (this.age < 18 || this.age > 80) {
-            errors.push("年齢は18歳から80歳の範囲で入力してください");
+        if (this.age < 16 || this.age > 100) {
+            errors.push("年齢は16歳から100歳の範囲で入力してください");
         }
         
-        if (this.weight < 40.0 || this.weight > 120.0) {
-            errors.push("体重は40kgから120kgの範囲で入力してください");
+        if (this.weight < 20.0 || this.weight > 120.0) {
+            errors.push("体重は20kgから120kgの範囲で入力してください");
         }
         
         const bmi = this.getBMI();
@@ -127,6 +127,13 @@ class BolusOptimizer {
         this.patient = patient;
         this.pkParams = pkParams;
         this.timeStep = MasuiModelConstants.TIME_STEP;
+        this.integrationSteps = 0;
+        this.functionEvaluations = 0;
+    }
+    
+    resetCounters() {
+        this.integrationSteps = 0;
+        this.functionEvaluations = 0;
     }
     
     // Calculate initial concentration after bolus dose
@@ -211,17 +218,22 @@ class BolusOptimizer {
     
     // 4th order Runge-Kutta integration (Context7 Math.NET inspired)
     updateSystemStateRK4(state, infusionRateMgMin, dt) {
+        this.integrationSteps++;
+        
         const k10 = this.pkParams.getK10();
         const k12 = this.pkParams.getK12();
         const k21 = this.pkParams.getK21();
         const k13 = this.pkParams.getK13();
         const k31 = this.pkParams.getK31();
         
-        const derivatives = (s) => ({
-            da1dt: infusionRateMgMin - (k10 + k12 + k13) * s.a1 + k21 * s.a2 + k31 * s.a3,
-            da2dt: k12 * s.a1 - k21 * s.a2,
-            da3dt: k13 * s.a1 - k31 * s.a3
-        });
+        const derivatives = (s) => {
+            this.functionEvaluations++;
+            return {
+                da1dt: infusionRateMgMin - (k10 + k12 + k13) * s.a1 + k21 * s.a2 + k31 * s.a3,
+                da2dt: k12 * s.a1 - k21 * s.a2,
+                da3dt: k13 * s.a1 - k31 * s.a3
+            };
+        };
         
         // 4th order Runge-Kutta integration
         const k1 = derivatives(state);
@@ -259,6 +271,9 @@ class BolusThresholdSimulator {
     
     // Complete bolus + threshold-based protocol simulation
     simulateCompleteProtocol(bolusDoseMg, initialContinuousRate, thresholdParams) {
+        // Reset integration counters for this simulation
+        this.optimizer.resetCounters();
+        
         const upperThreshold = thresholdParams.targetCe * thresholdParams.upperThresholdRatio;
         const reductionFactor = thresholdParams.reductionFactor;
         const minimumInterval = 5.0; // 5 minutes minimum between adjustments
@@ -395,7 +410,9 @@ class BolusThresholdSimulator {
             avgDeviation: avgDeviation,
             targetAccuracy: targetAccuracy,
             stabilityIndex: stabilityIndex,
-            convergenceTime: convergenceTime
+            convergenceTime: convergenceTime,
+            integrationSteps: this.optimizer.integrationSteps,
+            functionEvaluations: this.optimizer.functionEvaluations
         };
     }
 }
@@ -421,8 +438,8 @@ class BolusProtocolCalculator {
         }
         
         // Target concentration validation
-        if (targetCe < 0.5 || targetCe > 3.0) {
-            throw new Error("目標効果部位濃度は0.5-3.0 μg/mLの範囲で入力してください");
+        if (targetCe < 0.1 || targetCe > 3.0) {
+            throw new Error("目標効果部位濃度は0.1-3.0 μg/mLの範囲で入力してください");
         }
         
         // Set default protocol parameters

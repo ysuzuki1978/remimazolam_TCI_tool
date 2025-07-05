@@ -313,6 +313,10 @@ class RemimazolamBolusApp {
             `${results.dosageAdjustments.length} 回`;
         document.getElementById('stabilityIndex').textContent = 
             `${results.performance.stabilityIndex.toFixed(1)}`;
+        document.getElementById('integrationSteps').textContent = 
+            `${results.performance.integrationSteps || 0}`;
+        document.getElementById('functionEvaluations').textContent = 
+            `${results.performance.functionEvaluations || 0}`;
     }
     
     updateComparisonTable(comparisonData) {
