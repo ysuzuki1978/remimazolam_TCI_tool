@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="レミマゾラム TCI V3.4 - 個別化Ke0計算対応">
+    <meta name="keywords" content="remimazolam, TCI, bolus, continuous infusion, individualized ke0">
+    <meta name="author" content="YASUYUKI SUZUKI">
+    <title>Remimazolam TCI V3.4 - Individualized Ke0 Calculation</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/bolus-enhancements.css">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Disclaimer Modal -->
+    <div id="disclaimerModal" class="modal active">
+        <div class="modal-content">
+            <div class="disclaimer-header">
+                <div class="warning-icon">⚠️</div>
+                <h2>免責事項 - V3.3 ボーラス+持続投与最適化</h2>
+            </div>
+            <div class="disclaimer-text">
+                <p><strong>本アプリケーションは教育・研究目的専用です。</strong></p>
+                <p>・本ソフトウェアは医療機器ではありません</p>
+                <p>・診断、治療、その他一切の臨床用途に使用してはなりません</p>
+                <p>・計算結果の使用は利用者の責任において行ってください</p>
+                <p>・実際の臨床判断は、資格を持つ医療専門家の責任において行われるべきです</p>
+                <br>
+                <p><strong>薬物動態シミュレーション研究ツール</strong></p>
+                <p><em>ボーラス投与後の血中濃度推移と最適投与量の理論計算</em></p>
+            </div>
+            <button id="acceptDisclaimer" class="accept-btn">同意して使用開始</button>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Main App Container -->
+    <div id="mainApp" class="main-app hidden">
+        <header class="app-header">
+            <div class="header-content">
+                <h1>💊 Remimazolam TCI V3.3</h1>
+                <p class="subtitle">ボーラス+持続投与最適化システム (Bolus + Continuous Optimization)</p>
+                <div class="version-info">
+                    <span class="version">Version 3.3</span>
+                    <span class="engine">Clinical Bolus Protocol | Context7-Enhanced</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Patient Information Section -->
+            <section class="card patient-section">
+                <div class="card-header">
+                    <h2>👤 患者情報</h2>
+                </div>
+                <div class="card-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientId">患者ID</label>
+                            <input type="text" id="patientId" placeholder="例: V3.3-001" value="V3.3-001">
+                        </div>
+                        <div class="form-group">
+                            <label for="age">年齢 (歳)</label>
+                            <input type="number" id="age" min="18" max="80" value="55">
+                            <div class="input-info">18-80歳</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="weight">体重 (kg)</label>
+                            <input type="number" id="weight" min="40" max="120" step="0.1" value="70.0">
+                            <div class="input-info">40-120kg</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="height">身長 (cm)</label>
+                            <input type="number" id="height" min="140" max="200" value="170">
+                            <div class="input-info">140-200cm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>性別</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="sex" value="0" checked>
+                                    <span>男性</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="sex" value="1">
+                                    <span>女性</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>ASA-PS</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="asa" value="0" checked>
+                                    <span>ASA I-II</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="asa" value="1">
+                                    <span>ASA III</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>BMI</label>
+                            <div id="bmiDisplay" class="calculated-value">24.2</div>
+                        </div>
+                        <div class="form-group">
+                            <label>患者状態</label>
+                            <div id="patientStatus" class="calculated-value">正常範囲</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bolus + Target Configuration Section -->
+            <section class="card bolus-section">
+                <div class="card-header">
+                    <h2>💊 ボーラス+目標濃度設定</h2>
+                </div>
+                <div class="card-content">
+                    <div class="form-row">
+                        <div class="form-group bolus-dose-group">
+                            <label for="bolusDose">初回ボーラス投与量 (mg)</label>
+                            <input type="number" id="bolusDose" min="1" max="15" step="0.5" value="7">
+                            <div class="input-info">範囲: 1-15mg</div>
+                        </div>
+                        <div class="form-group target-ce-group">
+                            <label for="targetCe">目標効果部位濃度 (μg/mL)</label>
+                            <input type="number" id="targetCe" min="0.5" max="3.0" step="0.1" value="1.0">
+                            <div class="input-info">範囲: 0.5 - 3.0 μg/mL</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group optimization-preview-group">
+                            <label>最適化プレビュー</label>
+                            <div class="optimization-preview">
+                                <div class="optimization-step">
+                                    <span class="step-icon">💊</span>
+                                    <div class="step-details">
+                                        <span class="step-label">1. ボーラス投与</span>
+                                        <span class="step-value" id="previewBolusValue">7 mg</span>
+                                    </div>
+                                </div>
+                                <div class="optimization-step">
+                                    <span class="step-icon">⚡</span>
+                                    <div class="step-details">
+                                        <span class="step-label">2. 初期血中濃度</span>
+                                        <span class="step-value" id="previewInitialConc">計算中...</span>
+                                    </div>
+                                </div>
+                                <div class="optimization-step">
+                                    <span class="step-icon">🎯</span>
+                                    <div class="step-details">
+                                        <span class="step-label">3. 最適持続投与量</span>
+                                        <span class="step-value" id="previewOptimalRate">計算中...</span>
+                                    </div>
+                                </div>
+                                <div class="optimization-step">
+                                    <span class="step-icon">📈</span>
+                                    <div class="step-details">
+                                        <span class="step-label">4. 予測到達濃度</span>
+                                        <span class="step-value" id="previewTargetReach">計算中...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group optimization-settings-group">
+                            <label>最適化設定</label>
+                            <div class="optimization-parameters">
+                                <div class="param-item">
+                                    <label for="targetReachTime">目標到達時間 (分)</label>
+                                    <input type="number" id="targetReachTime" min="15" max="30" value="20">
+                                    <div class="param-help">ボーラス後の目標濃度到達時間</div>
+                                </div>
+                                <div class="param-item">
+                                    <label for="upperThresholdRatio">閾値比率</label>
+                                    <input type="number" id="upperThresholdRatio" min="1.1" max="1.5" step="0.05" value="1.2">
+                                    <div class="param-help">減量開始の閾値（目標×比率）</div>
+                                </div>
+                                <div class="param-item">
+                                    <label for="reductionFactor">減量係数</label>
+                                    <input type="number" id="reductionFactor" min="0.60" max="0.90" step="0.05" value="0.70">
+                                    <div class="param-help">閾値到達時の減量率</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group alert-settings-group">
+                            <label>アラート設定</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableAudio" checked>
+                                    <span>音声アラート</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableNotifications" checked>
+                                    <span>通知アラート</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableBolusAlert" checked>
+                                    <span>ボーラス投与アラート</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="generateOptimizationBtn" class="generate-btn">
+                        <span class="btn-icon">🧮</span>
+                        <span class="btn-text">ボーラス+持続投与最適化実行</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="card results-section hidden">
+                <div class="card-header">
+                    <h2>📋 ボーラス+持続投与最適化結果</h2>
+                    <div class="result-actions">
+                        <button id="printScheduleBtn" class="print-btn">🖨️ 印刷</button>
+                        <button id="exportCsvBtn" class="export-btn">💾 CSV出力</button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <!-- Optimization Summary -->
+                    <div class="optimization-summary">
+                        <div class="summary-grid">
+                            <div class="summary-item bolus">
+                                <div class="summary-label">ボーラス投与量</div>
+                                <div id="summaryBolusAmount" class="summary-value">7 mg</div>
+                            </div>
+                            <div class="summary-item continuous">
+                                <div class="summary-label">最適持続投与量</div>
+                                <div id="summaryOptimalRate" class="summary-value">0.00 mg/kg/hr</div>
+                            </div>
+                            <div class="summary-item target">
+                                <div class="summary-label">目標濃度</div>
+                                <div id="summaryTargetCe" class="summary-value">1.0 μg/mL</div>
+                            </div>
+                            <div class="summary-item prediction">
+                                <div class="summary-label">予測最終濃度</div>
+                                <div id="summaryFinalCe" class="summary-value">0.000 μg/mL</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Protocol Table -->
+                    <div class="protocol-table-container">
+                        <h3>臨床投与プロトコル</h3>
+                        <table id="protocolTable" class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>ステップ</th>
+                                    <th>投与方法</th>
+                                    <th>投与量</th>
+                                    <th>総投与量</th>
+                                    <th>実行タイミング</th>
+                                    <th>備考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Protocol rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Enhanced Concentration Chart -->
+                    <div class="chart-container">
+                        <h3>ボーラス+持続投与濃度推移</h3>
+                        <canvas id="concentrationChart"></canvas>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color bolus-marker"></div>
+                                <span>ボーラス投与</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color target-line"></div>
+                                <span>目標濃度</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color threshold-line"></div>
+                                <span>減量閾値</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color ce-line"></div>
+                                <span>効果部位濃度</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color infusion-line"></div>
+                                <span>持続投与量</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optimization Performance -->
+                    <div class="optimization-performance">
+                        <h3>最適化性能評価</h3>
+                        <div class="performance-grid">
+                            <div class="performance-item">
+                                <span class="performance-label">計算時間:</span>
+                                <span id="calculationTime">0ms</span>
+                            </div>
+                            <div class="performance-item">
+                                <span class="performance-label">目標精度:</span>
+                                <span id="targetAccuracy">0.0%</span>
+                            </div>
+                            <div class="performance-item">
+                                <span class="performance-label">平均偏差:</span>
+                                <span id="avgDeviation">0.000 μg/mL</span>
+                            </div>
+                            <div class="performance-item">
+                                <span class="performance-label">最大濃度:</span>
+                                <span id="maxConcentration">0.000 μg/mL</span>
+                            </div>
+                            <div class="performance-item">
+                                <span class="performance-label">調整回数:</span>
+                                <span id="adjustmentCount">0 回</span>
+                            </div>
+                            <div class="performance-item">
+                                <span class="performance-label">安定性指数:</span>
+                                <span id="stabilityIndex">0.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bolus Comparison -->
+                    <div id="comparisonSection" class="comparison-section">
+                        <h3>ボーラス投与量比較 (参考)</h3>
+                        <div class="comparison-table-container">
+                            <table id="comparisonTable" class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>ボーラス(mg)</th>
+                                        <th>最適持続投与量</th>
+                                        <th>最終濃度</th>
+                                        <th>精度</th>
+                                        <th>調整回数</th>
+                                        <th>推奨度</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Comparison data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Warning Section -->
+            <section id="warningSection" class="warning-section hidden">
+                <div class="warning-content">
+                    <span class="warning-icon">⚠️</span>
+                    <span id="warningMessage"></span>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="developer-info">
+                        <strong>開発者:</strong> YASUYUKI SUZUKI<br>
+                        済生会松山病院麻酔科・愛媛大学大学院医学系研究科薬理学<br>
+                        <span class="orcid">ORCID: 0000-0002-4871-9685</span>
+                    </div>
+                    <div class="reference-info">
+                        <strong>科学的根拠:</strong><br>
+                        Masui, K., et al. (2022). Population pharmacokinetics and pharmacodynamics of remimazolam. 
+                        <em>Journal of Anesthesia</em>, 36(4), 493-505.<br>
+                        <strong>数値計算:</strong> Context7 Math.NET Numerics Enhanced Algorithms
+                    </div>
+                </div>
+                <div class="footer-tech">
+                    <div>Developed with Claude Code (Anthropic) + Context7</div>
+                    <div>Bolus + Continuous Optimization TCI V3.3</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Optimization Info Modal -->
+    <div id="optimizationInfoModal" class="modal">
+        <div class="modal-content info-modal">
+            <div class="modal-header">
+                <h2>ボーラス+持続投与最適化について</h2>
+                <button class="close-btn" id="closeOptimizationInfo">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="info-section">
+                    <h3>💊 ボーラス投与の役割</h3>
+                    <ul>
+                        <li><strong>迅速導入:</strong> 瞬時に薬物を中枢コンパートメントに送達</li>
+                        <li><strong>濃度上昇:</strong> 持続投与のみでは時間のかかる初期上昇を短縮</li>
+                        <li><strong>実臨床対応:</strong> 「眠らせる」ための一般的な投与方法</li>
+                        <li><strong>個別化:</strong> 患者状態と目標濃度に応じた投与量調整</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>🧮 最適化アルゴリズム</h3>
+                    <ul>
+                        <li><strong>Context7強化:</strong> Math.NET Numericsの数値計算手法を応用</li>
+                        <li><strong>ルンゲ・クッタ法:</strong> 高精度な微分方程式求解</li>
+                        <li><strong>逆算最適化:</strong> 目標濃度から必要な持続投与量を計算</li>
+                        <li><strong>閾値制御:</strong> V3.2の最適化された閾値ベース減量</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>📊 最適化プロセス</h3>
+                    <ul>
+                        <li><strong>1. ボーラス分布:</strong> V1コンパートメントへの瞬時分布を計算</li>
+                        <li><strong>2. 初期濃度:</strong> ボーラス投与直後の血中濃度を算出</li>
+                        <li><strong>3. 持続投与最適化:</strong> 20分で目標濃度到達する投与量を逆算</li>
+                        <li><strong>4. 統合シミュレーション:</strong> ボーラス+持続+減量の完全予測</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>🔬 計算ロジック詳細</h3>
+                    <ul>
+                        <li><strong>PKモデル:</strong> Masui et al. (2022) 三区画モデル + 効果部位</li>
+                        <li><strong>個体差補正:</strong> 年齢、体重、性別、ASA-PS分類による係数調整</li>
+                        <li><strong>数値積分:</strong> 4次ルンゲ・クッタ法 (dt=0.1分)</li>
+                        <li><strong>最適化:</strong> グリッドサーチによる投与量逆算 (0.1 mg/kg/hr刻み)</li>
+                        <li><strong>閾値制御:</strong> 上限閾値1.2倍、減量係数0.70の統合制御</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>📚 科学的根拠</h3>
+                    <ul>
+                        <li><strong>基盤論文:</strong> Masui, K., et al. (2022). Population pharmacokinetics and pharmacodynamics of remimazolam. Journal of Anesthesia, 36(4), 493-505.</li>
+                        <li><strong>数値計算:</strong> Math.NET Numerics手法による高精度微分方程式求解</li>
+                        <li><strong>最適化理論:</strong> 制約条件付き最適化問題としての投与量決定</li>
+                        <li><strong>シミュレーション:</strong> Monte Carlo法による個体差検証</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/masui-ke0-calculator.js"></script>
+    <script src="assets/js/remimazolam-v3.3.js"></script>
+    <script src="assets/js/app-v3.3.js"></script>
+</body>
+</html>

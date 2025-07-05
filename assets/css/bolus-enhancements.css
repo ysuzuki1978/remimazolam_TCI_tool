@@ -1,0 +1,494 @@
+/* Remimazolam TCI V3.3 - Bolus-Specific Enhancements */
+
+/* Bolus-specific styling overrides and enhancements */
+
+/* Bolus dose group styling */
+.bolus-dose-group {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05));
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.bolus-dose-group label {
+    color: #8e44ad;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+}
+
+.bolus-dose-group input {
+    border-color: #9b59b6;
+    background-color: var(--bg-primary);
+}
+
+.bolus-dose-group input:focus {
+    border-color: #8e44ad;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+}
+
+/* Target CE group styling for bolus context */
+.target-ce-group {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.05));
+    border: 2px solid rgba(39, 174, 96, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.target-ce-group label {
+    color: #27ae60;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+}
+
+.target-ce-group input {
+    border-color: #2ecc71;
+}
+
+.target-ce-group input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+/* Optimization preview group */
+.optimization-preview-group {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.05));
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.optimization-preview-group label {
+    color: #2980b9;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Optimization preview grid */
+.optimization-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-md);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: var(--spacing-lg);
+    border-radius: 6px;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.optimization-step {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, var(--bg-primary), #f8f9fa);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.optimization-step:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+}
+
+.step-icon {
+    font-size: var(--font-size-xl);
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+}
+
+.step-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.step-value {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* Optimization settings group */
+.optimization-settings-group {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.05));
+    border: 2px solid rgba(243, 156, 18, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.optimization-settings-group label {
+    color: #d68910;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+}
+
+.optimization-parameters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-md);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: var(--spacing-lg);
+    border-radius: 6px;
+    border: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.param-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.param-item label {
+    color: var(--text-primary);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.param-item input {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    transition: border-color 0.2s ease;
+}
+
+.param-item input:focus {
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.1);
+}
+
+.param-help {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+    font-style: italic;
+}
+
+/* Alert settings group */
+.alert-settings-group {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.05));
+    border: 2px solid rgba(231, 76, 60, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.alert-settings-group label {
+    color: #c0392b;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: var(--spacing-md);
+    border-radius: 6px;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.checkbox-label:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: var(--spacing-sm);
+    accent-color: #e74c3c;
+}
+
+.checkbox-label span {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Bolus section header */
+.bolus-section .card-header {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05));
+    border-bottom: 2px solid rgba(155, 89, 182, 0.3);
+}
+
+.bolus-section .card-header h2 {
+    color: #8e44ad;
+    font-weight: 700;
+}
+
+/* Results section bolus-specific styling */
+.results-section.bolus-results {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.05), rgba(142, 68, 173, 0.02));
+    border: 2px solid rgba(155, 89, 182, 0.2);
+}
+
+/* Comparison section styling */
+.comparison-section {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.02));
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    margin-top: var(--spacing-xl);
+}
+
+.comparison-section h3 {
+    color: #2980b9;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.comparison-section h3::before {
+    content: "📊";
+    font-size: var(--font-size-lg);
+}
+
+.comparison-table-container {
+    background-color: var(--bg-primary);
+    border-radius: 6px;
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+}
+
+/* Bolus-specific chart enhancements */
+.chart-container {
+    position: relative;
+    height: 500px;
+}
+
+.chart-container canvas {
+    height: 400px !important;
+}
+
+/* Bolus marker styling */
+.chart-legend .legend-item {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Enhanced optimization button for bolus */
+.generate-btn {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: var(--text-light);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.generate-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.generate-btn:hover::before {
+    left: 100%;
+}
+
+.generate-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(155, 89, 182, 0.4);
+}
+
+.generate-btn:disabled {
+    background: linear-gradient(135deg, var(--text-muted), #85929e);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.generate-btn:disabled::before {
+    display: none;
+}
+
+/* Bolus alert enhancements */
+.alert.bolus-alert {
+    border-left-color: #9b59b6;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), var(--bg-primary));
+}
+
+.alert.bolus-alert .alert-title {
+    color: #8e44ad;
+    font-weight: 700;
+}
+
+/* Mobile optimizations for bolus features */
+@media (max-width: 768px) {
+    .optimization-preview {
+        grid-template-columns: 1fr;
+    }
+    
+    .optimization-parameters {
+        grid-template-columns: 1fr;
+    }
+    
+    .bolus-dose-group,
+    .target-ce-group,
+    .optimization-preview-group,
+    .optimization-settings-group,
+    .alert-settings-group {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .step-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .generate-btn {
+        font-size: var(--font-size-base);
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .optimization-step {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .step-icon {
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .checkbox-group {
+        gap: var(--spacing-xs);
+    }
+    
+    .comparison-section {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Animation enhancements for bolus features */
+.optimization-step {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.optimization-step:nth-child(1) { animation-delay: 0.1s; }
+.optimization-step:nth-child(2) { animation-delay: 0.2s; }
+.optimization-step:nth-child(3) { animation-delay: 0.3s; }
+.optimization-step:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading state for optimization preview */
+.optimization-preview.loading .step-value {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    color: transparent;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Bolus-specific tooltip styling */
+.bolus-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.bolus-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 4px;
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.bolus-tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Bolus success states */
+.optimization-success {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.05));
+    border: 2px solid var(--success-color);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.optimization-success .success-icon {
+    color: var(--success-color);
+    font-size: var(--font-size-2xl);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Bolus warning states */
+.optimization-warning {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.05));
+    border: 2px solid var(--warning-color);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.optimization-warning .warning-icon {
+    color: var(--warning-color);
+    font-size: var(--font-size-2xl);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
